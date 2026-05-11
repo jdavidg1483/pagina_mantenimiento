@@ -1,60 +1,96 @@
 import './style.css'
-import javascriptLogo from './assets/javascript.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import { setupCounter } from './counter.js'
 
-document.querySelector('#app').innerHTML = `
-<section id="center">
-  <div class="hero">
-    <img src="${heroImg}" class="base" width="170" height="179">
-    <img src="${javascriptLogo}" class="framework" alt="JavaScript logo"/>
-    <img src="${viteLogo}" class="vite" alt="Vite logo" />
-  </div>
-  <div>
-    <h1>Get started</h1>
-    <p>Edit <code>src/main.js</code> and save to test <code>HMR</code></p>
-  </div>
-  <button id="counter" type="button" class="counter"></button>
-</section>
+/* =========================
+   COUNTDOWN
+========================= */
 
-<div class="ticks"></div>
+const countdownContainer = document.getElementById('countdownContainer')
 
-<section id="next-steps">
-  <div id="docs">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#documentation-icon"></use></svg>
-    <h2>Documentation</h2>
-    <p>Your questions, answered</p>
-    <ul>
-      <li>
-        <a href="https://vite.dev/" target="_blank">
-          <img class="logo" src="${viteLogo}" alt="" />
-          Explore Vite
-        </a>
-      </li>
-      <li>
-        <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-          <img class="button-icon" src="${javascriptLogo}" alt="">
-          Learn more
-        </a>
-      </li>
-    </ul>
-  </div>
-  <div id="social">
-    <svg class="icon" role="presentation" aria-hidden="true"><use href="/icons.svg#social-icon"></use></svg>
-    <h2>Connect with us</h2>
-    <p>Join the Vite community</p>
-    <ul>
-      <li><a href="https://github.com/vitejs/vite" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#github-icon"></use></svg>GitHub</a></li>
-      <li><a href="https://chat.vite.dev/" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#discord-icon"></use></svg>Discord</a></li>
-      <li><a href="https://x.com/vite_js" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#x-icon"></use></svg>X.com</a></li>
-      <li><a href="https://bsky.app/profile/vite.dev" target="_blank"><svg class="button-icon" role="presentation" aria-hidden="true"><use href="/icons.svg#bluesky-icon"></use></svg>Bluesky</a></li>
-    </ul>
-  </div>
-</section>
+const targetDate = new Date()
+targetDate.setDate(targetDate.getDate() + 10)
 
-<div class="ticks"></div>
-<section id="spacer"></section>
-`
+function updateCountdown() {
 
-setupCounter(document.querySelector('#counter'))
+  const now = new Date().getTime()
+  const distance = targetDate - now
+
+  const days = Math.floor(distance / (1000 * 60 * 60 * 24))
+  const hours = Math.floor((distance / (1000 * 60 * 60)) % 24)
+  const minutes = Math.floor((distance / (1000 * 60)) % 60)
+  const seconds = Math.floor((distance / 1000) % 60)
+
+  countdownContainer.innerHTML = `
+    ${createBox(days, 'Días')}
+    ${createBox(hours, 'Horas')}
+    ${createBox(minutes, 'Min')}
+    ${createBox(seconds, 'Seg')}
+  `
+}
+
+function createBox(value, label) {
+  return `
+    <div class="glass-card rounded-2xl px-5 py-4 min-w-[90px] text-center">
+      <div class="text-3xl font-black text-white">${value}</div>
+      <div class="text-xs uppercase tracking-wider text-indigo-300 mt-1">${label}</div>
+    </div>
+  `
+}
+
+setInterval(updateCountdown, 1000)
+updateCountdown()
+
+/* =========================
+   PARTICLES CANVAS
+========================= */
+
+const canvas = document.getElementById('particleCanvas')
+const ctx = canvas.getContext('2d')
+
+canvas.width = window.innerWidth
+canvas.height = window.innerHeight
+
+let particles = []
+
+for(let i = 0; i < 80; i++){
+
+  particles.push({
+    x: Math.random() * canvas.width,
+    y: Math.random() * canvas.height,
+    r: Math.random() * 2,
+    dx: (Math.random() - .5) * .5,
+    dy: (Math.random() - .5) * .5
+  })
+}
+
+function animate(){
+
+  ctx.clearRect(0,0,canvas.width,canvas.height)
+
+  particles.forEach(p => {
+
+    ctx.beginPath()
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2)
+    ctx.fillStyle = 'rgba(255,255,255,.5)'
+    ctx.fill()
+
+    p.x += p.dx
+    p.y += p.dy
+
+    if(p.x < 0 || p.x > canvas.width) p.dx *= -1
+    if(p.y < 0 || p.y > canvas.height) p.dy *= -1
+  })
+
+  requestAnimationFrame(animate)
+}
+
+animate()
+
+/* =========================
+   BUTTON ACTION
+========================= */
+
+document.getElementById('notifyBtn')
+.addEventListener('click', () => {
+
+  alert('✨ Gracias. Te notificaremos cuando Joionova Digital esté online.')
+})
